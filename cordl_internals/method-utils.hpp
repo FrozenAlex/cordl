@@ -74,8 +74,10 @@ template <typename TOut, typename T, typename... TArgs> CORDL_HIDDEN TOut RunSha
   return std::bit_cast<TOut>(result);
 }
 
-// Void/reference results use the ordinary runtime path with original metadata.
-// Calling it directly also avoids older hooks' null-methodPointer rejection.
+// Modified version of beatsaber-hook's i2c::detail::run_method_impl that uses
+// already-resolved metadata for void/reference returns and accepts a null
+// methodPointer when a valid shared invoker and virtual entry exist.
+// https://github.com/QuestPackageManager/beatsaber-hook/blob/939d1c2850ca963c87e928f80186cfc8c32d25de/shared/members.hpp#L14-L60
 template <typename TOut, typename T, typename... TArgs> CORDL_HIDDEN TOut RunSharedGenericRuntimeMethod(T&& instance, MethodInfo const* method, TArgs&&... params) {
   ::i2c::functions::initialize();
   if (!method->invoker_method || (!method->methodPointer && !method->virtualMethodPointer)) {
